@@ -4,7 +4,7 @@ import 'src/nav_button.dart';
 import 'src/nav_custom_painter.dart';
 
 class CurvedNavigationBar extends StatefulWidget {
-  final List<Widget> items;
+  final List<CurvedNavItem> items;
   final int index;
   final Color color;
   final Color buttonBackgroundColor;
@@ -48,7 +48,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
   @override
   void initState() {
     super.initState();
-    _icon = widget.items[widget.index];
+    _icon = widget.items[widget.index].icon;
     _length = widget.items.length;
     _pos = widget.index / _length;
     _startingPos = widget.index / _length;
@@ -59,7 +59,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
         final endingPos = _endingIndex / widget.items.length;
         final middle = (endingPos + _startingPos) / 2;
         if ((endingPos - _pos).abs() < (_startingPos - _pos).abs()) {
-          _icon = widget.items[_endingIndex];
+          _icon = widget.items[_endingIndex].icon;
         }
         _buttonHide =
             (1 - ((middle - _pos) / (_startingPos - middle)).abs()).abs();
@@ -146,7 +146,25 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                     position: _pos,
                     length: _length,
                     index: widget.items.indexOf(item),
-                    child: item,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        item.icon,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          child: Text(
+                            item.label.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 }).toList())),
           ),
@@ -155,7 +173,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
     );
   }
 
-  void setPage(int index){
+  void setPage(int index) {
     _buttonTap(index);
   }
 
@@ -171,4 +189,11 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
           duration: widget.animationDuration, curve: widget.animationCurve);
     });
   }
+}
+
+class CurvedNavItem {
+  final String label;
+  final Widget icon;
+
+  CurvedNavItem({this.label, this.icon});
 }
